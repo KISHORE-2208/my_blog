@@ -1,0 +1,55 @@
+<h1><%= @post.title %></h1>
+<p><%= @post.content %></p>
+
+<%= link_to "Edit", edit_post_path(@post), class: "btn btn-warning" %> |
+
+
+<%= link_to 'Delete', @post, method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-danger" %> |
+
+
+<%= link_to "Back", posts_path, class: "btn btn-secondary" %> 
+
+<hr>
+
+<h2>Comments</h2>
+
+<% if @post.comments.any? %>
+  <ul class="list-group">
+    <% @post.comments.each do |comment| %>
+      <li class="list-group-item">
+        <strong>Comment:</strong> <%= comment.content %> <br>
+        <small>Posted on: <%= comment.created_at.strftime("%d %b %Y, %I:%M %p") %></small>
+
+        <%= link_to "Delete", post_comment_path(@post, comment),
+                    method: :delete,
+                    data: { confirm: "Are you sure you want to delete this comment?" },
+                    class: "btn btn-danger btn-sm" %>
+      </li>
+    <% end %>
+  </ul>
+<% else %>
+  <p>No comments yet. Be the first to comment!</p>
+<% end %>
+
+<hr>
+
+<h3>Add a Comment</h3>
+
+<%= form_with(model: [@post, @post.comments.build], local: true) do |form| %>
+  <% if @post.comments.any? && @post.comments.last.errors.any? %>
+    <div class="alert alert-danger">
+      <ul>
+        <% @post.comments.last.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="form-group">
+    <%= form.label :content, "Your Comment:" %>
+    <%= form.text_area :content, rows: 3, class: "form-control" %>
+  </div>
+
+  <%= form.submit "Post Comment", class: "btn btn-primary mt-2" %>
+<% end %>
